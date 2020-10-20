@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Alert from './components/Alert'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -10,9 +11,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [Notification, setNotification] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [blogVisible, setBlogVisible] = useState(false)
+
 
 
   useEffect(() => {
@@ -60,28 +60,39 @@ const App = () => {
     setUser(null)
   }
 
-  const addNewBlog = async (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-      id: blogs.length+1    }
+  const addNewBlog = (blogObject) => {
 
       blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNotification(`a new blog ${title} added`)
+        setNotification(`a new blog ${JSON.stringify(blogObject.title)} added`)
         setTimeout(() => {
           setNotification('')
         }, 5000)
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+        setBlogVisible(false)
       })
   }
+
+  const sortByLikes = (blogsByLikes) => {
+    blogsByLikes.sort((blog1, blog2) => blog2.likes - blog1.likes)
+    setBlogs(blogsByLikes)
+  }
+
+  const giveLike = async (blog) => {
+    const blogObject = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      user: blog.user.id
+    }
+    await blogService.update(blog.id, blogObject)
+    sortByLikes(await blogService.getAll())
+
+  }
+    
+  
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -107,38 +118,25 @@ const App = () => {
     </form>    
   )
 
-  const blogForm = () => (
-    <form onSubmit={addNewBlog}>
+  const blogForm = () => {
+    const hideWhenVisible = { display: blogVisible ? 'none' : '' }
+    const showWhenVisible = { display: blogVisible ? '' : 'none' }
+
+    return(
       <div>
-        title:
-        <input
-        type="text"
-        value={title}
-        name="Title"
-        onChange={({ target }) => setTitle(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogVisible(true)}>new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          
+          <BlogForm
+            createBlog={addNewBlog}
+          />
+          <button onClick={() => setBlogVisible(false)}>cancel</button>
+        </div>
       </div>
-      <div>
-        author:
-        <input
-        type="text"
-        value={author}
-        name="Author"
-        onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-        <input
-        type="text"
-        value={url}
-        name="Url"
-        onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
-  )
+    )
+  }
   
   if (user === null) {
 
@@ -155,15 +153,16 @@ const App = () => {
     <div>
       <Alert message={Notification}/>
       <p>{user.name} logged in <button onClick={handleLogout}>log out</button></p>
-      <h2>create new</h2>
       {blogForm()}
       <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((blog1, blog2) => blog2.likes - blog1.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} giveLike={giveLike}/>
       )}
     </div>
   )
 }
+
+
 
 
 
