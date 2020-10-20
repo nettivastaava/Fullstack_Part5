@@ -74,6 +74,8 @@ const App = () => {
       })
   }
 
+  
+
   const sortByLikes = (blogsByLikes) => {
     blogsByLikes.sort((blog1, blog2) => blog2.likes - blog1.likes)
     setBlogs(blogsByLikes)
@@ -156,7 +158,7 @@ const App = () => {
       {blogForm()}
       <h2>blogs</h2>
       {blogs.sort((blog1, blog2) => blog2.likes - blog1.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} giveLike={giveLike}/>
+        <Blog key={blog.id} blog={blog} user={user} giveLike={giveLike} blogs={blogs} setBlogs={setBlogs}/>
       )}
     </div>
   )
