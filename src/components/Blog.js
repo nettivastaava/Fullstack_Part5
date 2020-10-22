@@ -26,8 +26,7 @@ const Blog = ({ blog, user, giveLike, blogs, setBlogs }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  console.log(blog.user.username)
-  console.log(user.username)
+
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
