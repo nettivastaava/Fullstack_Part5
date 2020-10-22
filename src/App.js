@@ -39,8 +39,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
-      
+      )    
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -55,14 +54,12 @@ const App = () => {
 
   const handleLogout = async (event) => {
     event.preventDefault()
-
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
   const addNewBlog = (blogObject) => {
-
-      blogService
+    blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
@@ -100,7 +97,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -109,7 +106,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -141,7 +138,6 @@ const App = () => {
   }
   
   if (user === null) {
-
     return (
       <div>
         <Alert message={Notification}/>

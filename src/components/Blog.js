@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
 
@@ -12,7 +12,6 @@ const Blog = ({ blog, user, giveLike, blogs, setBlogs }) => {
   const deleteBlog = () => {
 
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) { 
-
       blogService.deleteBlog(blog.id)
         .then(() => {
           setBlogs(blogs.filter(b => b.id !== blog.id))
