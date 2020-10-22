@@ -1,5 +1,6 @@
 import React, { useState} from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 
 const Blog = ({ blog, user, giveLike, blogs, setBlogs }) => {
@@ -8,12 +9,11 @@ const Blog = ({ blog, user, giveLike, blogs, setBlogs }) => {
   const hideWhenVisible = { display: blogVisible ? 'none' : '' }
   const showWhenVisible = { display: blogVisible ? '' : 'none' }
 
-  const deleteBlog = (event) => {
+  const deleteBlog = () => {
 
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) { 
-      event.preventDefault()
-      blogService
-        .deleteBlog(blog.id)
+
+      blogService.deleteBlog(blog.id)
         .then(() => {
           setBlogs(blogs.filter(b => b.id !== blog.id))
         })
@@ -43,11 +43,19 @@ const Blog = ({ blog, user, giveLike, blogs, setBlogs }) => {
         <br/>
         {blog.user.name}
         <br/>
-        {blog.user.username===user.username && <button onClick={deleteBlog}>delete</button>}
+        {blog.user.username===user.username && <button onClick={() => deleteBlog()}>delete</button>}
         <br/>
       </div>
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  giveLike: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired,
+  setBlogs: PropTypes.func.isRequired
 }
 
 export default Blog
