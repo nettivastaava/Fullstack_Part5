@@ -105,5 +105,43 @@ describe('Blog app', function() {
       })
     })
 
+    describe('When logged in', function() {
+      beforeEach(function() {
+        cy.get('#username').type('Tarkastaja')
+        cy.get('#password').type('salainen')
+        cy.get('#login-button').click()
+
+        cy.get('#newBlogButton').click()
+        cy.get('#title').type('Harjulan taistelu')
+        cy.get('#author').type('Heimo Huima')
+        cy.get('#url').type('/.../')
+        cy.get('#createBlog').click()
+
+        cy.get('#newBlogButton').click()
+        cy.get('#title').type('Harjulan taistelu II')
+        cy.get('#author').type('Heimo Huima')
+        cy.get('#url').type('/.../')
+        cy.get('#createBlog').click()
+
+
+        
+
+      })
+
+      it('Blogs are listed by likes', function() {
+        cy.get('div').eq(0).should('contain', 'Harjulan taistelu Heimo Huima')
+        cy.get('div').eq(1).should('contain', 'Harjulan taistelu II Heimo Huima')
+        cy.get('div').eq(1).get('#show').click()
+        cy.get('div').eq(1).get('#like').click()
+        cy.get('div').eq(1).should('contain', 'Harjulan taistelu Heimo Huima')
+        cy.get('div').eq(0).should('contain', 'Harjulan taistelu II Heimo Huima')
+        
+        
+
+        
+
+      })
+    })
+
 
 })
